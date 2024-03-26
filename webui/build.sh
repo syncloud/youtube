@@ -9,3 +9,4 @@ ARCH=$2
 apk add wget
 
 wget --progress dot:giga https://github.com/marcopeocchi/yt-dlp-web-ui/releases/download/v$VERSION/yt-dlp-webui_linux-$ARCH -O ${DIR}/../build/snap/webui
+chmod +x ${DIR}/../build/snap/webui
