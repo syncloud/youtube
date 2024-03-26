@@ -49,7 +49,7 @@ local build(arch, test_ui, dind) = [{
         },
         {
             name: "webui",
-            image: "debian:bookworm-slim",
+            image: "alpine:3.17.0",
             commands: [
                 "./webui/build.sh " + version + " " + arch
             ]
