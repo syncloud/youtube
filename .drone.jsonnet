@@ -1,6 +1,6 @@
 local name = "youtube";
 local browser = "firefox";
-local version = "3.0.6";
+local version = "latest";
 local nginx = "1.24.0";
 local authelia = "master";
 local deployer = "https://github.com/syncloud/store/releases/download/4/syncloud-release";
@@ -49,11 +49,12 @@ local build(arch, test_ui, dind) = [{
         },
         {
             name: "webui",
-            image: "alpine:3.17.0",
+            image: "marcobaobao/yt-dlp-webui:" + version,
             commands: [
-                "./webui/build.sh " + version + " " + arch
+                "./webui/build.sh"
             ]
         },
+
        {
             name: "test webui",
             image: "debian:buster-slim",
