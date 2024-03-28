@@ -1,0 +1,5 @@
+#!/bin/bash -xe
+DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
+LIBS=$(echo ${DIR}/lib)
+LIBS=$LIBS:$(echo ${DIR}/usr/lib)
+exec ${DIR}/lib/ld-musl-*.so* --library-path $LIBS ${DIR}/usr/bin/python3 "$@"
