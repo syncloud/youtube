@@ -5,4 +5,4 @@ LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*)
 LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*/pulseaudio)
 LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*/blas)
 LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*/lapack)
-exec ${DIR}/lib/*-linux*/ld-*.so.* --library-path $LIBS ${DIR}/usr/bin/ffmpeg "$@"
+exec ${DIR}/lib/ld-musl-*.so* --library-path $LIBS ${DIR}/usr/bin/ffmpeg "$@"
