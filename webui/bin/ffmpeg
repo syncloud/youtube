@@ -1,8 +1,6 @@
 #!/bin/bash -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
-LIBS=$(echo ${DIR}/lib/*-linux-gnu*)
-LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*)
-LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*/pulseaudio)
-LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*/blas)
-LIBS=$LIBS:$(echo ${DIR}/usr/lib/*-linux-gnu*/lapack)
+LIBS=$(echo ${DIR}/lib)
+LIBS=$LIBS:$(echo ${DIR}/usr/lib)
+LIBS=$LIBS:$(echo ${DIR}/usr/lib/pulseaudio)
 exec ${DIR}/lib/ld-musl-*.so* --library-path $LIBS ${DIR}/usr/bin/ffmpeg "$@"
