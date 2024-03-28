@@ -15,7 +15,7 @@ apps:
     - network
     - network-bind
     restart-condition: always
-  daemon:
+  webui:
     user: youtube
     command: bin/service.webui.sh
     daemon: simple

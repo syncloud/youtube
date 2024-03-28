@@ -1,0 +1,26 @@
+---
+# Host where server will listen at (default: "0.0.0.0")
+host: /var/snap/youtube/current/webui.socket
+
+# Port where server will listen at (default: 3033)
+# port: 8989
+
+# Directory where downloaded files will be stored (default: ".")
+downloadPath: /data/youtube
+
+# [optional] Enable RPC authentication (requires username and password)
+require_auth: false
+# username: my_username
+# password: my_random_secret
+
+# [optional] The download queue size (default: 8)
+queue_size: 4
+
+# [optional] Full path to the yt-dlp (default: "yt-dlp")
+downloaderPath: /usr/local/bin/yt-dlp
+
+# [optional] Directory where the log file will be stored (default: ".")
+log_path: /var/snap/youtube/current
+
+# [optional] Directory where the session database file will be stored (default: ".")
+session_file_path: /var/snap/youtube/current
