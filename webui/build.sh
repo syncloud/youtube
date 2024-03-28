@@ -2,12 +2,12 @@
 
 DIR=$( cd "$( dirname "$0" )" && pwd )
 cd ${DIR}
+BUILD_DIR=${DIR}/../build/snap/webui
+mkdir -p $BUILD_DIR/bin
 
-VERSION=$1
-ARCH=$2
-
-#apk add wget
-
-#wget --progress dot:giga https://github.com/marcopeocchi/yt-dlp-web-ui/releases/download/v$VERSION/yt-dlp-webui_linux-$ARCH -O ${DIR}/../build/snap/webui
-#chmod +x ${DIR}/../build/snap/webui
-cp /app/yt-dlp-webui ${DIR}/../build/snap/webui
+cp /app/yt-dlp-webui ${BUILD_DIR}/bin
+cp -r /opt ${BUILD_DIR}
+cp -r /usr ${BUILD_DIR}
+cp -r /bin ${BUILD_DIR}
+cp -r /lib ${BUILD_DIR}
+cp -r ${DIR}/bin/* ${BUILD_DIR}/bin
