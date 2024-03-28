@@ -3,6 +3,7 @@ local browser = "firefox";
 local version = "latest";
 local nginx = "1.24.0";
 local authelia = "master";
+local selenium = "4.19.0-20240328";
 local deployer = "https://github.com/syncloud/store/releases/download/4/syncloud-release";
 
 local build(arch, test_ui, dind) = [{
@@ -245,7 +246,7 @@ local build(arch, test_ui, dind) = [{
         }
     ] + ( if test_ui then [{
             name: "selenium",
-            image: "selenium/standalone-" + browser + ":4.0.0-beta-3-prerelease-20210402",
+            image: "selenium/standalone-" + browser + ":" + selenium,
             volumes: [{
                 name: "shm",
                 path: "/dev/shm"
