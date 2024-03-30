@@ -35,8 +35,15 @@ def test_login(selenium, device_user, device_password):
     selenium.screenshot('login')
     #password.send_keys(Keys.RETURN)
     selenium.find_by(By.ID, "sign-in-button").click()
-    selenium.find_by(By.ID, "toolbar-open")
+    selenium.find_by(By.XPATH, "//p[contains(.,'No active downloads')]")
     selenium.screenshot('main')
+
+
+def test_download(selenium, device_user, device_password):
+    selenium.find_by(By.XPATH, "//svg[@data-testid='AddIcon']")
+click()
+    selenium.find_by(By.XPATH, "//div[@download='yt']")
+    #https://m.youtube.com/watch?v=x983nr0lXwo
 
 
 def test_teardown(driver):
