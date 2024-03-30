@@ -40,8 +40,7 @@ def test_login(selenium, device_user, device_password):
 
 
 def test_download(selenium, device_user, device_password):
-    selenium.find_by(By.XPATH, "//svg[@data-testid='AddIcon']")
-click()
+    selenium.find_by(By.XPATH, "//svg[@data-testid='AddIcon']").click()
     selenium.find_by(By.XPATH, "//div[@download='yt']")
     #https://m.youtube.com/watch?v=x983nr0lXwo
 
