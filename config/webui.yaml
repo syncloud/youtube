@@ -1,6 +1,6 @@
 ---
 # Host where server will listen at (default: "0.0.0.0")
-# host: /var/snap/youtube/current/webui.socket
+host: /var/snap/youtube/current/webui.socket
 
 # Port where server will listen at (default: 3033)
 # port: 8989
