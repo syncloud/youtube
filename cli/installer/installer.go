@@ -110,18 +110,6 @@ func (i *Installer) StorageChange() error {
 		return err
 	}
 
-	err = os.Mkdir(path.Join(storageDir, "media"), 0755)
-	if err != nil {
-		if !os.IsExist(err) {
-			return err
-		}
-	}
-	err = os.Mkdir(path.Join(storageDir, "cache"), 0755)
-	if err != nil {
-		if !os.IsExist(err) {
-			return err
-		}
-	}
 	err = linux.Chown(storageDir, App)
 	if err != nil {
 		return err
@@ -149,7 +137,7 @@ func (i *Installer) UpdateConfigs() error {
 	if err != nil {
 		return err
 	}
-	appUrl, err := i.platformClient.GetAppDomainName(App)
+	appUrl, err := i.platformClient.GetAppUrl(App)
 	if err != nil {
 		return err
 	}
