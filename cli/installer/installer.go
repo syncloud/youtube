@@ -149,6 +149,10 @@ func (i *Installer) UpdateConfigs() error {
 	if err != nil {
 		return err
 	}
+	appUrl, err := i.platformClient.GetAppDomainName(App)
+	if err != nil {
+		return err
+	}
 	encryptionKey, err := os.ReadFile(i.autheliaStorageEncryptionKeyFile)
 	if err != nil {
 		return err
@@ -159,6 +163,7 @@ func (i *Installer) UpdateConfigs() error {
 	}
 	vars := map[string]string{
 		"domain":         domain,
+		"app_url":        appUrl,
 		"encryption_key": string(encryptionKey),
 		"jwt_secret":     string(jwtSecret),
 	}
