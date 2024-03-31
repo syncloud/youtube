@@ -35,18 +35,21 @@ def test_login(selenium, device_user, device_password):
     selenium.screenshot('login')
     #password.send_keys(Keys.RETURN)
     selenium.find_by(By.ID, "sign-in-button").click()
+    selenium.find_by(By.XPATH, "//div[contains(.,'Connected to')]")
+    selenium.screenshot('connected')
+    selenium.invisible_by(By.XPATH, "//div[contains(.,'Connected to')]")
     selenium.find_by(By.XPATH, "//p[contains(.,'No active downloads')]")
-    selenium.screenshot('main')
+    selenium.screenshot('no-downloads')
 
 
 def test_download(selenium, device_user, device_password):
     selenium.find_by(By.XPATH, "//button[@aria-label='Home speed dial']").click()
     selenium.find_by(By.XPATH, "//button[@aria-label='New download']").click()
-    selenium.find_by(By.XPATH, "////textarea").send_keys("https://m.youtube.com/watch?v=x983nr0lXwo")
+    selenium.find_by(By.XPATH, "//textarea").send_keys("https://m.youtube.com/watch?v=x983nr0lXwo")
     selenium.find_by(By.XPATH, "//button[contains(.,'Start')]").click()
     selenium.find_by(By.XPATH, "//div[contains(.,'Syncloud Introduction')]")
     selenium.find_by(By.XPATH, "//span[contains(.,'Completed')]")
-
+    selenium.screenshot('completed')
 
 def test_teardown(driver):
     driver.quit()
