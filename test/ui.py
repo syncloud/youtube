@@ -50,7 +50,3 @@ def test_download(selenium, device_user, device_password):
     selenium.find_by(By.XPATH, "//div[contains(.,'Syncloud Introduction')]")
     selenium.find_by(By.XPATH, "//span[contains(.,'Completed')]")
     selenium.screenshot('completed')
-
-def test_teardown(driver):
-    driver.quit()
-
