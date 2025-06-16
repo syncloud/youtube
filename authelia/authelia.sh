@@ -1,3 +1,4 @@
 #!/bin/bash -e
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && cd .. && pwd )
-${DIR}/lib/ld-musl-*.so* --library-path ${DIR}/lib ${DIR}/app/authelia "$@"
+LIBS=$(echo ${DIR}/lib/*-linux-gnu*)
+${DIR}/lib/*-linux*/ld-*.so* --library-path ${LIB} ${DIR}/app/authelia "$@"
