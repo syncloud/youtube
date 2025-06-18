@@ -15,7 +15,7 @@ apps:
     - network
     - network-bind
     restart-condition: always
-    restart-delay:10s
+    restart-delay: 10s
   webui:
     user: youtube
     command: bin/service.webui.sh
