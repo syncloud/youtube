@@ -6,7 +6,7 @@ local authelia = '4.39.4';
 local selenium = '4.21.0-20240517';
 local platform = '25.02';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
-local python = '3.10-slim-buster';
+local python = '3.12-slim-bookworm';
 local distro_default = 'buster';
 local distros = ['bookworm', 'buster'];
 
@@ -21,7 +21,7 @@ local build(arch, test_ui, dind) = [{
   steps: [
     {
       name: 'version',
-      image: 'debian:buster-slim',
+      image: 'debian:bookworm-slim',
       commands: [
         'echo $DRONE_BUILD_NUMBER > version',
       ],
@@ -84,7 +84,7 @@ local build(arch, test_ui, dind) = [{
     },
     {
       name: 'package',
-      image: 'debian:buster-slim',
+      image: 'debian:bookworm-slim',
       commands: [
         'VERSION=$(cat version)',
         './package.sh ' + name + ' $VERSION ',
@@ -170,7 +170,7 @@ local build(arch, test_ui, dind) = [{
     },
     {
       name: 'upload',
-      image: 'debian:buster-slim',
+      image: 'debian:bookworm-slim',
       environment: {
         AWS_ACCESS_KEY_ID: {
           from_secret: 'AWS_ACCESS_KEY_ID',
@@ -196,7 +196,7 @@ local build(arch, test_ui, dind) = [{
     },
     {
       name: 'promote',
-      image: 'debian:buster-slim',
+      image: 'debian:bookworm-slim',
       environment: {
         AWS_ACCESS_KEY_ID: {
           from_secret: 'AWS_ACCESS_KEY_ID',
