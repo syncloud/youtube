@@ -142,20 +142,20 @@ local build(arch, test_ui, dind) = [{
                           path: '/videos',
                         },
                       ],
-                    },
+                    }] + [
                     {
-                      name: 'test-ui',
+                      name: 'test-ui-'+distro,
                       image: 'python:' + python,
                       commands: [
                         'cd test',
                         './deps.sh',
-                        'py.test -x -s ui.py --distro=' + distro_default + ' --ui-mode=desktop --domain=' + distro_default + '.com --device-host=' + name + '.' + distro_default + '.com --app=' + name + ' --browser-height=2000 --browser=' + browser,
+                        'py.test -x -s ui.py --distro=' + distro + ' --ui-mode=desktop --domain=' + distro + '.com --device-host=' + name + '.' + distro + '.com --app=' + name + ' --browser-height=2000 --browser=' + browser,
                       ],
                       volumes: [{
                         name: 'videos',
                         path: '/videos',
                       }],
-                    }
+                    } for distro in distros
 
        ] else []) + [
     {
