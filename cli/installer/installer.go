@@ -15,11 +15,12 @@ import (
 const App = "youtube"
 
 type Variables struct {
-	App       string
-	AppDir    string
-	DataDir   string
-	CommonDir string
-	AuthUrl   string
+	App         string
+	AppDir      string
+	DataDir     string
+	CommonDir   string
+	AuthUrl     string
+	AuthAddress string
 }
 
 type Installer struct {
