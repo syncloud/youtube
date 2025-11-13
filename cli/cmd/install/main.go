@@ -2,7 +2,11 @@ package main
 
 import (
 	"fmt"
+	"hooks/log"
+
 	"github.com/spf13/cobra"
+	"go.uber.org/zap"
+
 	"hooks/installer"
 	"os"
 )
@@ -12,7 +16,8 @@ func main() {
 		Use:          "install",
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return installer.New().Install()
+			logger := log.Logger(zap.DebugLevel)
+			return installer.New(logger).Install()
 		},
 	}
 
