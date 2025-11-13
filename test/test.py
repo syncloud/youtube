@@ -20,8 +20,7 @@ def module_setup(request, device, app_dir, artifact_dir):
     def module_teardown():
         device.run_ssh('ls -la /var/snap/youtube/current/config > {0}/config.ls.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/snap/youtube/current/config/webui.yaml {0}/webui.yaml.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('cp /var/snap/youtube/current/config/authelia/config.yml {0}/authelia.config.yml.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('cp /var/snap/youtube/current/config/authelia/authrequest.conf {0}/authelia.authrequest.conf.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('cp /var/snap/youtube/current/config/authelia-location.conf {0}/authelia-location.conf.log'.format(TMP_DIR), throw=False)
         device.run_ssh('top -bn 1 -w 500 -c > {0}/top.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ps auxfw > {0}/ps.log'.format(TMP_DIR), throw=False)
         device.run_ssh('netstat -nlp > {0}/netstat.log'.format(TMP_DIR), throw=False)

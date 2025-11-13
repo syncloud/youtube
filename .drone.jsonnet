@@ -2,7 +2,6 @@ local name = 'youtube';
 local browser = 'firefox';
 local version = 'latest';
 local nginx = '1.24.0';
-local authelia = '4.39.4';
 local selenium = '4.21.0-20240517';
 local platform = '25.02';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
@@ -38,21 +37,6 @@ local build(arch, test_ui, dind) = [{
       image: 'syncloud/platform-buster-' + arch + ':' + platform,
       commands: [
         './nginx/test.sh',
-      ],
-    },
-    {
-      name: 'authelia',
-      image: 'authelia/authelia:' + authelia,
-      commands: [
-        './authelia/package.sh',
-      ],
-
-    },
-    {
-      name: 'authelia test',
-      image: 'syncloud/platform-buster-' + arch + ':' + platform,
-      commands: [
-        './authelia/test.sh',
       ],
     },
     {

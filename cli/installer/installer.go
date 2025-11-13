@@ -2,61 +2,58 @@ package installer
 
 import (
 	"fmt"
-	"github.com/google/uuid"
-	cp "github.com/otiai10/copy"
-	"github.com/syncloud/golib/linux"
-	"github.com/syncloud/golib/platform"
 	"os"
 	"path"
-	"strings"
+
+	cp "github.com/otiai10/copy"
+	"github.com/syncloud/golib/config"
+	"github.com/syncloud/golib/linux"
+	"github.com/syncloud/golib/platform"
+	"go.uber.org/zap"
 )
 
-const (
-	App       = "youtube"
-	AppDir    = "/snap/youtube/current"
-	DataDir   = "/var/snap/youtube/current"
-	CommonDir = "/var/snap/youtube/common"
-)
+const App = "youtube"
 
-type Installer struct {
-	newVersionFile                   string
-	currentVersionFile               string
-	configDir                        string
-	platformClient                   *platform.Client
-	autheliaStorageEncryptionKeyFile string
-	autheliaJwtSecretFile            string
+type Variables struct {
+	App       string
+	AppDir    string
+	DataDir   string
+	CommonDir string
+	AuthUrl   string
 }
 
-func New() *Installer {
-	configDir := path.Join(DataDir, "config")
+type Installer struct {
+	newVersionFile     string
+	currentVersionFile string
+	configDir          string
+	appDir             string
+	dataDir            string
+	commonDir          string
+	platformClient     *platform.Client
+	logger             *zap.Logger
+}
+
+func New(logger *zap.Logger) *Installer {
+	appDir := fmt.Sprintf("/snap/%s/current", App)
+	dataDir := fmt.Sprintf("/var/snap/%s/current", App)
+	commonDir := fmt.Sprintf("/var/snap/%s/common", App)
+
+	configDir := path.Join(dataDir, "config")
 
 	return &Installer{
-		newVersionFile:                   path.Join(AppDir, "version"),
-		currentVersionFile:               path.Join(DataDir, "version"),
-		configDir:                        configDir,
-		platformClient:                   platform.New(),
-		autheliaStorageEncryptionKeyFile: path.Join(DataDir, "authelia.storage.encryption.key"),
-		autheliaJwtSecretFile:            path.Join(DataDir, "authelia.jwt.secret"),
+		newVersionFile:     path.Join(appDir, "version"),
+		currentVersionFile: path.Join(dataDir, "version"),
+		configDir:          configDir,
+		appDir:             appDir,
+		dataDir:            dataDir,
+		commonDir:          commonDir,
+		platformClient:     platform.New(),
+		logger:             logger,
 	}
 }
 
 func (i *Installer) Install() error {
 	err := linux.CreateUser(App)
-	if err != nil {
-		return err
-	}
-
-	err = os.Mkdir(path.Join(DataDir, "nginx"), 0755)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(i.autheliaStorageEncryptionKeyFile, []byte(uuid.New().String()), 0644)
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(i.autheliaJwtSecretFile, []byte(uuid.New().String()), 0644)
 	if err != nil {
 		return err
 	}
@@ -128,72 +125,56 @@ func (i *Installer) UpdateVersion() error {
 
 func (i *Installer) UpdateConfigs() error {
 
-	err := cp.Copy(path.Join(AppDir, "config"), path.Join(DataDir, "config"))
-	if err != nil {
-		return err
-	}
-
-	domain, err := i.platformClient.GetAppDomainName(App)
-	if err != nil {
-		return err
-	}
-	appUrl, err := i.platformClient.GetAppUrl(App)
-	if err != nil {
-		return err
-	}
-	encryptionKey, err := os.ReadFile(i.autheliaStorageEncryptionKeyFile)
-	if err != nil {
-		return err
-	}
-	jwtSecret, err := os.ReadFile(i.autheliaJwtSecretFile)
-	if err != nil {
-		return err
-	}
-	vars := map[string]string{
-		"domain":         domain,
-		"app_url":        appUrl,
-		"encryption_key": string(encryptionKey),
-		"jwt_secret":     string(jwtSecret),
-	}
-
-	err = i.InjectVariables(
-		path.Join(AppDir, "config", "authelia", "config.yml"),
-		path.Join(DataDir, "config", "authelia", "config.yml"),
-		vars,
+	err := linux.CreateMissingDirs(
+		path.Join(i.dataDir, "nginx"),
 	)
 	if err != nil {
 		return err
 	}
-	err = i.InjectVariables(
-		path.Join(AppDir, "config", "authelia", "authrequest.conf"),
-		path.Join(DataDir, "config", "authelia", "authrequest.conf"),
-		vars,
-	)
 
+	authUrl, err := i.platformClient.GetAppUrl("auth")
+	if err != nil {
+		return err
+	}
+
+	err = config.Generate(
+		path.Join(i.appDir, "config"),
+		path.Join(i.dataDir, "config"),
+		Variables{
+			AuthUrl:   authUrl,
+			App:       App,
+			AppDir:    i.appDir,
+			DataDir:   i.dataDir,
+			CommonDir: i.commonDir,
+		},
+	)
 	return err
-
-}
-
-func (i *Installer) InjectVariables(from, to string, vars map[string]string) error {
-	templateFile, err := os.ReadFile(from)
-	if err != nil {
-		return err
-	}
-	template := string(templateFile)
-	for key, value := range vars {
-		template = strings.ReplaceAll(template, fmt.Sprintf("{{ %s }}", key), value)
-	}
-	return os.WriteFile(to, []byte(template), 0644)
 }
 
 func (i *Installer) FixPermissions() error {
-	err := linux.Chown(DataDir, App)
+	err := linux.Chown(i.dataDir, App)
 	if err != nil {
 		return err
 	}
-	err = linux.Chown(CommonDir, App)
+	err = linux.Chown(i.commonDir, App)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (i *Installer) AccessChange() error {
+	return i.UpdateConfigs()
+}
+
+func (i *Installer) BackupPreStop() error {
+	return i.PreRefresh()
+}
+
+func (i *Installer) RestorePreStart() error {
+	return i.PostRefresh()
+}
+
+func (i *Installer) RestorePostStart() error {
+	return i.Configure()
 }
