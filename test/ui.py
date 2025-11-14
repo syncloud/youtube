@@ -50,6 +50,7 @@ def test_login(selenium, device_user, device_password):
 
 def test_download(selenium, device_user, device_password):
     selenium.click_by(By.XPATH, "//button[@aria-label='Home speed dial']")
+    selenium.clickable_by(By.XPATH, "//button[@aria-label='New download']")
     selenium.click_by(By.XPATH, "//button[@aria-label='New download']")
     selenium.find_by(By.XPATH, "//textarea").send_keys("https://m.youtube.com/watch?v=x983nr0lXwo")
     selenium.click_by(By.XPATH, "//button[contains(.,'Start')]")
