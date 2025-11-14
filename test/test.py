@@ -20,8 +20,7 @@ def module_setup(request, device, app_dir, artifact_dir):
     def module_teardown():
         device.run_ssh('ls -la /var/snap/youtube/current/config > {0}/config.ls.log'.format(TMP_DIR), throw=False)
         device.run_ssh('cp /var/snap/youtube/current/config/webui.yaml {0}/webui.yaml.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('cp /var/snap/youtube/current/config/authelia/config.yml {0}/authelia.config.yml.log'.format(TMP_DIR), throw=False)
-        device.run_ssh('cp /var/snap/youtube/current/config/authelia/authrequest.conf {0}/authelia.authrequest.conf.log'.format(TMP_DIR), throw=False)
+        device.run_ssh('cp /var/snap/youtube/current/config/authelia-location.conf {0}/authelia-location.conf.log'.format(TMP_DIR), throw=False)
         device.run_ssh('top -bn 1 -w 500 -c > {0}/top.log'.format(TMP_DIR), throw=False)
         device.run_ssh('ps auxfw > {0}/ps.log'.format(TMP_DIR), throw=False)
         device.run_ssh('netstat -nlp > {0}/netstat.log'.format(TMP_DIR), throw=False)
@@ -52,8 +51,9 @@ def test_start(module_setup, device, device_host, app, domain):
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
   
 
+@pytest.mark.flaky(retries=10, delay=5)
 def test_activate_device(device):
-    response = retry(device.activate_custom)
+    response = device.activate_custom()
     assert response.status_code == 200, response.text
 
 
@@ -61,8 +61,10 @@ def test_install(app_archive_path, device_host, device_password):
     local_install(device_host, device_password, app_archive_path)
 
 
-def test_index(app_domain):
-    wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
+@pytest.mark.flaky(retries=10, delay=5)
+def test_visible_through_platform(app_domain):
+    response = requests.get('https://{0}'.format(app_domain), verify=False)
+    assert response.status_code == 200, response.text
 
 
 def __log_data_dir(device):
@@ -96,16 +98,3 @@ def test_upgrade(app_archive_path, device_host, device_password):
 def test_index_after_upgrade(app_domain):
     wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
 
-
-def retry(method, retries=10):
-    attempt = 0
-    exception = None
-    while attempt < retries:
-        try:
-            return method()
-        except Exception as e:
-            exception = e
-            print('error (attempt {0}/{1}): {2}'.format(attempt + 1, retries, str(e)))
-            time.sleep(5)
-        attempt += 1
-    raise exception

@@ -2,15 +2,16 @@ package main
 
 import (
 	"fmt"
+	"hooks/log"
+
 	"github.com/spf13/cobra"
-	"github.com/syncloud/golib/log"
+	"go.uber.org/zap"
+
 	"hooks/installer"
 	"os"
 )
 
 func main() {
-	logger := log.Logger()
-
 	var cmd = &cobra.Command{
 		Use:          "cli",
 		SilenceUsage: true,
@@ -19,36 +20,50 @@ func main() {
 	cmd.AddCommand(&cobra.Command{
 		Use: "storage-change",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
 			logger.Info("storage-change")
-			return installer.New().StorageChange()
+			install := installer.New(logger)
+			return install.StorageChange()
 		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
 		Use: "access-change",
-		Run: func(cmd *cobra.Command, args []string) {
-			logger.Warn("access-change is not implemented yet")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("access-change")
+			install := installer.New(logger)
+			return install.AccessChange()
 		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
 		Use: "backup-pre-stop",
-		Run: func(cmd *cobra.Command, args []string) {
-			logger.Warn("backup-pre-stop is not implemented yet")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("backup-pre-stop")
+			install := installer.New(logger)
+			return install.BackupPreStop()
 		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
 		Use: "restore-pre-start",
-		Run: func(cmd *cobra.Command, args []string) {
-			logger.Warn("restore-pre-start is not implemented yet")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("restore-pre-start")
+			install := installer.New(logger)
+			return install.RestorePreStart()
 		},
 	})
 
 	cmd.AddCommand(&cobra.Command{
 		Use: "restore-post-start",
-		Run: func(cmd *cobra.Command, args []string) {
-			logger.Warn("restore-post-start is not implemented yet")
+		RunE: func(cmd *cobra.Command, args []string) error {
+			logger := log.Logger(zap.DebugLevel)
+			logger.Info("restore-post-start")
+			install := installer.New(logger)
+			return install.RestorePostStart()
 		},
 	})
 
