@@ -27,6 +27,12 @@ def test_start(module_setup, app, domain, device_host):
     add_host_alias(app, device_host, domain)
 
 
+def test_auth(selenium, device_user, device_password, domain):
+    selenium.driver.get("https://auth.{0}".format(domain))
+    selenium.find_by(By.ID, "username-textfield").send_keys(device_user)
+    selenium.screenshot('auth')
+
+
 def test_login(selenium, device_user, device_password):
     selenium.open_app()
     selenium.find_by(By.ID, "username-textfield").send_keys(device_user)
