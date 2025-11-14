@@ -51,8 +51,9 @@ def test_start(module_setup, device, device_host, app, domain):
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
   
 
+@pytest.mark.flaky(retries=10, delay=5)
 def test_activate_device(device):
-    response = retry(device.activate_custom)
+    response = device.activate_custom()
     assert response.status_code == 200, response.text
 
 
@@ -60,7 +61,7 @@ def test_install(app_archive_path, device_host, device_password):
     local_install(device_host, device_password, app_archive_path)
 
 
-pytest.mark.flaky(retries=10, delay=5)
+@pytest.mark.flaky(retries=10, delay=5)
 def test_visible_through_platform(app_domain):
     response = requests.get('https://{0}'.format(app_domain), verify=False)
     assert response.status_code == 200, response.text
