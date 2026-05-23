@@ -34,7 +34,7 @@ apps:
     command: bin/cli restore-post-start
 
 confinement: strict
-description: YouTube
+description: YouTube downloader based on yt-dlp tool
 grade: stable
 name: youtube
-summary: youtube
+summary: YouTube Downloader
