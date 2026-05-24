@@ -1,22 +1,6 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
+import { signIn } from '../helpers/auth'
 import { ssh } from '../helpers/ssh'
-
-const deviceUser = required('PLAYWRIGHT_DEVICE_USER')
-const devicePassword = required('PLAYWRIGHT_DEVICE_PASSWORD')
-
-function required(name: string): string {
-  const v = process.env[name]
-  if (!v) throw new Error(`${name} is required`)
-  return v
-}
-
-async function signIn(page: Page) {
-  await page.goto('/')
-  await page.locator('#username-textfield').fill(deviceUser)
-  await page.locator('#password-textfield').fill(devicePassword)
-  await page.locator('#sign-in-button').click()
-  await expect(page.getByText('No active downloads')).toBeVisible()
-}
 
 test('filebrowser serves files at the symlink-resolved path', async ({ page }) => {
   ssh('echo regression > /data/youtube/regression_filebrowser.bin')
