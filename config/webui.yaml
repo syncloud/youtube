@@ -6,7 +6,7 @@ host: /var/snap/youtube/current/webui.socket
 # port: 8989
 
 # Directory where downloaded files will be stored (default: ".")
-downloadPath: /data/youtube
+downloadPath: {{ .DownloadDir }}
 
 # [optional] Enable RPC authentication (requires username and password)
 require_auth: false

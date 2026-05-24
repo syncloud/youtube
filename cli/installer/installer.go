@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"path/filepath"
 
 	cp "github.com/otiai10/copy"
 	"github.com/syncloud/golib/config"
@@ -19,6 +20,7 @@ type Variables struct {
 	AppDir      string
 	DataDir     string
 	CommonDir   string
+	DownloadDir string
 	AuthUrl     string
 	AuthAddress string
 }
@@ -113,7 +115,7 @@ func (i *Installer) StorageChange() error {
 		return err
 	}
 
-	return nil
+	return i.UpdateConfigs()
 }
 
 func (i *Installer) ClearVersion() error {
@@ -138,15 +140,22 @@ func (i *Installer) UpdateConfigs() error {
 		return err
 	}
 
+	dataRoot := "/data"
+	if resolved, err := filepath.EvalSymlinks(dataRoot); err == nil {
+		dataRoot = resolved
+	}
+	downloadDir := path.Join(dataRoot, App)
+
 	err = config.Generate(
 		path.Join(i.appDir, "config"),
 		path.Join(i.dataDir, "config"),
 		Variables{
-			AuthUrl:   authUrl,
-			App:       App,
-			AppDir:    i.appDir,
-			DataDir:   i.dataDir,
-			CommonDir: i.commonDir,
+			AuthUrl:     authUrl,
+			App:         App,
+			AppDir:      i.appDir,
+			DataDir:     i.dataDir,
+			CommonDir:   i.commonDir,
+			DownloadDir: downloadDir,
 		},
 	)
 	return err
