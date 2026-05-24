@@ -8,7 +8,7 @@ test('clicking Download on a file in the filebrowser serves it (regression for #
   ssh(`chown youtube:youtube /data/youtube/${filename}`)
 
   await signIn(page)
-  await page.goto('/filebrowser')
+  await page.locator('a[href="/filebrowser"]').click()
   await expect(page.getByText(filename)).toBeVisible()
 
   const respPromise = context.waitForEvent('response', r => /\/filebrowser\/d\//.test(r.url()))
