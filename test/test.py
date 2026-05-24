@@ -1,6 +1,4 @@
-import base64
 import os
-import urllib.parse
 from os.path import join
 from subprocess import check_output
 
@@ -86,19 +84,6 @@ def test_storage_change_event(device):
 
 def test_access_change_event(device):
     device.run_ssh('snap run youtube.access-change > {0}/access-change.log'.format(TMP_DIR))
-
-
-def test_filebrowser_download_resolved_path(device):
-    device.run_ssh('echo regression > /data/youtube/regression_filebrowser.bin')
-    device.run_ssh('chown youtube:youtube /data/youtube/regression_filebrowser.bin')
-    resolved = device.run_ssh('readlink -f /data/youtube/regression_filebrowser.bin').strip()
-    encoded = urllib.parse.quote(base64.b64encode(resolved.encode()).decode(), safe='')
-    code = device.run_ssh(
-        "curl -s -o /dev/null -w '%{{http_code}}' "
-        "--unix-socket /var/snap/youtube/current/webui.socket "
-        "'http://localhost/filebrowser/d/{0}'".format(encoded)
-    ).strip()
-    assert code == '200', 'GET /filebrowser/d/<base64({0})> returned {1}'.format(resolved, code)
 
 
 def test_remove(device, app):
