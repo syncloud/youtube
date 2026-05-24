@@ -2,15 +2,19 @@ import { test, expect } from '@playwright/test'
 import { signIn } from '../helpers/auth'
 import { ssh } from '../helpers/ssh'
 
-test('filebrowser serves files at the symlink-resolved path', async ({ page }) => {
-  ssh('echo regression > /data/youtube/regression_filebrowser.bin')
-  ssh('chown youtube:youtube /data/youtube/regression_filebrowser.bin')
-  const resolved = ssh('readlink -f /data/youtube/regression_filebrowser.bin').trim()
-  const id = encodeURIComponent(Buffer.from(resolved).toString('base64'))
+test('clicking Download on a file in the filebrowser serves it (regression for #652)', async ({ page, context }) => {
+  const filename = 'regression_filebrowser.bin'
+  ssh(`echo regression > /data/youtube/${filename}`)
+  ssh(`chown youtube:youtube /data/youtube/${filename}`)
 
   await signIn(page)
-  const resp = await page.request.get(`/filebrowser/d/${id}`)
+  await page.goto('/filebrowser')
+  await expect(page.getByText(filename)).toBeVisible()
 
-  expect(resp.status(), `GET /filebrowser/d/<base64(${resolved})>`).toBe(200)
-  expect(await resp.text()).toContain('regression')
+  const respPromise = context.waitForEvent('response', r => /\/filebrowser\/d\//.test(r.url()))
+  await page.getByText(filename).click({ button: 'right' })
+  await page.getByRole('menuitem', { name: 'Download' }).click()
+  const resp = await respPromise
+
+  expect(resp.status(), `GET ${resp.url()}`).toBe(200)
 })
