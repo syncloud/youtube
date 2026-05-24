@@ -2,7 +2,7 @@ local name = 'youtube';
 local browser = 'firefox';
 local version = 'latest';
 local nginx = '1.24.0';
-local platform = '25.09';
+local platform = '26.04.10';
 local selenium = '4.35.0-20250828';
 local deployer = 'https://github.com/syncloud/store/releases/download/4/syncloud-release';
 local python = '3.12-slim-bookworm';
@@ -249,6 +249,7 @@ local build(arch, test_ui, dind) = [{
             name: name + '.' + distro + '.com',
             image: 'syncloud/platform-' + distro + '-' + arch + ':' + platform,
             privileged: true,
+            entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
             volumes: [
               {
                 name: 'dbus',
