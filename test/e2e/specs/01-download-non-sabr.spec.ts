@@ -2,9 +2,6 @@ import { test, expect } from '@playwright/test'
 import { signIn } from '../helpers/auth'
 import { shoot } from '../helpers/screenshot'
 
-// A short non-SABR video that yt-dlp 2025.10.22 can still download.
-// Verifies the happy path: yt-dlp completes -> savedFilePath is set ->
-// the Home Download icon serves the file with 200.
 test('non-SABR YouTube video Download icon serves the file', async ({ page, context }, testInfo) => {
   await signIn(page)
   await page.getByRole('button', { name: 'Home speed dial' }).hover()
