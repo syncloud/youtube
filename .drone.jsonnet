@@ -89,19 +89,8 @@ local build(arch, test_ui, dind) = [{
       {
         name: 'test-ui-' + distro,
         image: playwright,
-        environment: {
-          PLAYWRIGHT_FULL_DOMAIN: distro + '.com',
-          PLAYWRIGHT_APP_DOMAIN: name + '.' + distro + '.com',
-          PLAYWRIGHT_DEVICE_HOST: name + '.' + distro + '.com',
-          PLAYWRIGHT_DEVICE_USER: 'user',
-          PLAYWRIGHT_DEVICE_PASSWORD: 'Password1',
-          PLAYWRIGHT_ARTIFACT_DIR: '/drone/src/artifact/e2e-' + distro,
-        },
         commands: [
-          'apt-get update && apt-get install -y sshpass',
-          'cd test/e2e',
-          'npm ci',
-          'npx playwright test --project=desktop',
+          './test/e2e/run.sh ' + distro,
         ],
       }
       for distro in distros
