@@ -8,7 +8,7 @@ local python = '3.12-slim-bookworm';
 local distro_default = 'bookworm';
 local distros = ['bookworm'];
 
-local build(arch, test_ui, dind) = [{
+local build(arch, test_ui) = [{
   kind: 'pipeline',
   type: 'docker',
   name: arch,
@@ -184,35 +184,23 @@ local build(arch, test_ui, dind) = [{
   },
   services: [
     {
-      name: 'docker',
-      image: 'docker:' + dind,
+      name: name + '.' + distro + '.com',
+      image: 'syncloud/platform-' + distro + '-' + arch + ':' + platform,
       privileged: true,
+      entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
       volumes: [
         {
-          name: 'dockersock',
-          path: '/var/run',
+          name: 'dbus',
+          path: '/var/run/dbus',
+        },
+        {
+          name: 'dev',
+          path: '/dev',
         },
       ],
-    },
-    ] + [
-          {
-            name: name + '.' + distro + '.com',
-            image: 'syncloud/platform-' + distro + '-' + arch + ':' + platform,
-            privileged: true,
-            entrypoint: ['/bin/sh', '-c', "mkdir -p /etc/systemd/system/snapd.service.d && printf '[Service]\\nExecStartPost=/bin/sh -c \"/usr/bin/snap set system refresh.hold=2099-01-01T00:00:00Z\"\\n' > /etc/systemd/system/snapd.service.d/disable-refresh.conf && exec /sbin/init"],
-            volumes: [
-              {
-                name: 'dbus',
-                path: '/var/run/dbus',
-              },
-              {
-                name: 'dev',
-                path: '/dev',
-              },
-            ],
-          }
-          for distro in distros
-        ],
+    }
+    for distro in distros
+  ],
   volumes: [
     {
       name: 'dbus',
@@ -226,12 +214,8 @@ local build(arch, test_ui, dind) = [{
         path: '/dev',
       },
     },
-    {
-      name: 'dockersock',
-      temp: {},
-    },
   ],
 }];
 
-build('amd64', true, '20.10.21-dind') +
-build('arm64', false, '20.10.21-dind')
+build('amd64', true) +
+build('arm64', false)
