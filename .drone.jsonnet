@@ -90,7 +90,7 @@ local build(arch, test_ui) = [{
         name: 'test-ui-' + distro,
         image: playwright,
         commands: [
-          './test/e2e/run.sh ' + distro,
+          './test/e2e/run.sh ' + distro + ' ' + name,
         ],
       }
       for distro in distros
