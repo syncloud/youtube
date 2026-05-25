@@ -51,10 +51,14 @@ def test_start(module_setup, device, device_host, app, domain):
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
   
 
-@pytest.mark.flaky(retries=10, delay=5)
 def test_activate_device(device):
-    response = device.activate_custom()
+    response = retry(device.activate_custom)
     assert response.status_code == 200, response.text
+
+
+def test_ca_cert(device):
+    device.run_ssh('cp /var/snap/platform/current/syncloud.ca.crt /usr/local/share/ca-certificates')
+    device.run_ssh('update-ca-certificates 2>&1 > {0}/update-ca-certificates.log'.format(TMP_DIR))
 
 
 def test_install(app_archive_path, device_host, device_password):
@@ -97,4 +101,18 @@ def test_upgrade(app_archive_path, device_host, device_password):
 
 def test_index_after_upgrade(app_domain):
     wait_for_rest(requests.session(), "https://{0}".format(app_domain), 200, 10)
+
+
+def retry(method, retries=10):
+    attempt = 0
+    exception = None
+    while attempt < retries:
+        try:
+            return method()
+        except Exception as e:
+            exception = e
+            print('error (attempt {0}/{1}): {2}'.format(attempt + 1, retries, str(e)))
+            time.sleep(5)
+        attempt += 1
+    raise exception
 
