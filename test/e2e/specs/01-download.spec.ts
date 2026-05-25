@@ -11,9 +11,9 @@ test('downloaded video serves through the Download icon (regression for #652)', 
   await signIn(page)
   await page.getByRole('button', { name: 'Home speed dial' }).hover()
   await page.getByRole('menuitem', { name: 'New download' }).click()
-  await page.locator('textarea').first().fill('https://m.youtube.com/watch?v=x983nr0lXwo')
+  await page.locator('textarea').first().fill('https://www.youtube.com/watch?v=NokXiX-aznM')
   await page.getByRole('button', { name: 'Start' }).click()
-  await expect(page.getByText('Syncloud Introduction')).toBeVisible()
+  await expect(page.getByText('21,000 RPM')).toBeVisible()
   await expect(page.getByText('Completed')).toBeVisible({ timeout: 120_000 })
   await shoot(page, testInfo, 'download-completed')
 
