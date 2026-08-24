@@ -8,9 +8,9 @@ export default defineConfig({
   testDir: './specs',
   fullyParallel: false,
   workers: 1,
-  retries: 0,
+  retries: process.env.CI ? 1 : 0,
   maxFailures: 0,
-  reporter: [['list']],
+  reporter: [['list'], ['html', { outputFolder: `${artifactDir}/playwright/report`, open: 'never' }]],
   outputDir: `${artifactDir}/playwright/test-results`,
   globalSetup: './globalSetup.ts',
   globalTeardown: './globalTeardown.ts',
@@ -27,6 +27,10 @@ export default defineConfig({
     {
       name: 'desktop',
       use: { ...devices['Desktop Chrome'], viewport: { width: 1440, height: 960 } },
+    },
+    {
+      name: 'mobile',
+      use: { ...devices['Pixel 7'] },
     },
   ],
   metadata: {

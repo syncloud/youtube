@@ -1,22 +1,27 @@
+name: youtube
+summary: YouTube Downloader
+description: YouTube downloader based on yt-dlp tool
+grade: stable
+
 apps:
   nginx:
     user: youtube
     command: bin/service.nginx.sh
     daemon: simple
-    plugs:
-    - network
-    - network-bind
     restart-condition: always
+    start-timeout: 600s
     restart-delay: 10s
+
   webui:
     user: youtube
     command: bin/service.webui.sh
     daemon: simple
-    plugs:
-    - network
-    - network-bind
     restart-condition: always
+    start-timeout: 600s
     restart-delay: 10s
+
+  cli:
+    command: bin/cli
 
   storage-change:
     command: bin/cli storage-change
@@ -32,9 +37,3 @@ apps:
 
   restore-post-start:
     command: bin/cli restore-post-start
-
-confinement: strict
-description: YouTube downloader based on yt-dlp tool
-grade: stable
-name: youtube
-summary: YouTube Downloader

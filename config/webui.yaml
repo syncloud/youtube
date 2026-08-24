@@ -19,8 +19,5 @@ queue_size: 4
 # [optional] Full path to the yt-dlp (default: "yt-dlp")
 downloaderPath: /snap/youtube/current/webui/bin/yt-dlp
 
-# [optional] Directory where the log file will be stored (default: ".")
-log_path: /var/snap/youtube/current
-
 # [optional] Directory where the session database file will be stored (default: ".")
 session_file_path: /var/snap/youtube/current

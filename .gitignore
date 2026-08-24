@@ -1,1 +1,7 @@
 .idea
+build/
+artifact/
+node_modules/
+version
+package.name
+*.snap
