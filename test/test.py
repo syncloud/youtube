@@ -8,6 +8,7 @@ from requests.packages.urllib3.exceptions import InsecureRequestWarning
 from syncloudlib.http import wait_for_rest
 from syncloudlib.integration.hosts import add_host_alias
 from syncloudlib.integration.installer import local_install
+from .snapd import settle
 import time
 
 TMP_DIR = '/tmp/syncloud'
@@ -48,8 +49,9 @@ def module_setup(request, device, app_dir, artifact_dir):
 def test_start(module_setup, device, device_host, app, domain):
     add_host_alias(app, device_host, domain)
     device.run_ssh('date', retries=100)
+    settle(device)
     device.run_ssh('mkdir {0}'.format(TMP_DIR))
-  
+
 
 def test_activate_device(device):
     response = retry(device.activate_custom)

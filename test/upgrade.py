@@ -3,6 +3,7 @@ from subprocess import check_output
 from syncloudlib.integration.hosts import add_host_alias
 from syncloudlib.integration.installer import local_install
 from syncloudlib.http import wait_for_rest
+from .snapd import settle
 import requests
 
 TMP_DIR = '/tmp/syncloud'
@@ -20,6 +21,7 @@ def module_setup(request, device, artifact_dir):
 
 def test_start(module_setup, app, device_host, domain, device):
     add_host_alias(app, device_host, domain)
+    settle(device)
     device.activated()
     device.run_ssh('rm -rf {0}'.format(TMP_DIR), throw=False)
     device.run_ssh('mkdir {0}'.format(TMP_DIR), throw=False)
