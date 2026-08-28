@@ -15,12 +15,12 @@ import (
 const App = "youtube"
 
 type Variables struct {
-	App         string
-	AppDir      string
-	DataDir     string
-	CommonDir   string
-	AuthUrl     string
-	AuthAddress string
+	App             string
+	AppDir          string
+	DataDir         string
+	CommonDir       string
+	AuthLocalSocket string
+	AuthAddress     string
 }
 
 type Installer struct {
@@ -133,20 +133,15 @@ func (i *Installer) UpdateConfigs() error {
 		return err
 	}
 
-	authUrl, err := i.platformClient.GetAppUrl("auth")
-	if err != nil {
-		return err
-	}
-
 	err = config.Generate(
 		path.Join(i.appDir, "config"),
 		path.Join(i.dataDir, "config"),
 		Variables{
-			AuthUrl:   authUrl,
-			App:       App,
-			AppDir:    i.appDir,
-			DataDir:   i.dataDir,
-			CommonDir: i.commonDir,
+			AuthLocalSocket: i.platformClient.GetAuthLocalSocket(),
+			App:             App,
+			AppDir:          i.appDir,
+			DataDir:         i.dataDir,
+			CommonDir:       i.commonDir,
 		},
 	)
 	return err
